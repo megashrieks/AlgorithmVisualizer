@@ -6,12 +6,13 @@ export default () => {
     const canvasRef = createRef();
     const canvasctx = useContext(CanvasContext);
     useEffect(() => {
+        if (canvasRef == null || parentRef == null) return;
         canvasRef.current.width = parentRef.current.clientWidth;
         canvasRef.current.height = parentRef.current.clientHeight;
 
         canvasctx.setCanvas(canvasRef.current);
-
-    }, [canvasRef, parentRef, canvasctx]);
+        // eslint-disable-next-line
+    }, []);
     return <div className="canvas" ref = {parentRef}>
         <canvas ref={canvasRef}/>
     </div>

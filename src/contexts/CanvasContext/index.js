@@ -1,24 +1,32 @@
-import React,{ createContext } from 'react';
-
+import React,{ useState, createContext } from 'react';
+import { Representation } from './Representation/';
 const CanvasContext = createContext();
 
 const ContextProvider = ({ children }) => {
-    let canvas = null;
-    let drawCtx = null;
-    let dimension = { width: 0, height: 0 };
+    let [state, setState] = useState({
+        canvas: null,
+        drawCtx: null,
+        dimension: { width: 0, height: 0 },
+        representation:null
+    });
     const setCanvas = can => {
-        canvas = can;
+        let canvas = can;
+        let dimension = {};
         dimension.width = can.width;
         dimension.height = can.height;
 
-        drawCtx = canvas.getContext("2d");
+        let drawCtx = canvas.getContext("2d");
         
         drawCtx.fillStyle = "#eee";
         drawCtx.fillRect(0, 0, can.width, can.height);
+        let representation = new Representation(can, drawCtx);
+        setState({
+            canvas, dimension, drawCtx, representation
+        });
     }
 
     return <CanvasContext.Provider value={{
-        canvas, setCanvas, drawCtx
+        setCanvas, ...state
     }}>
         {children}
     </CanvasContext.Provider>
