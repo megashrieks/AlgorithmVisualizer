@@ -9,6 +9,7 @@ class GNode{
     id = null;
     repr = null;
     position = null;
+    held = false;
     constructor(representation, position = {
         x: representation.canvas.width * Math.random(),
         y: representation.canvas.height * Math.random()
@@ -18,10 +19,18 @@ class GNode{
         this.repr = representation;
         this.position = position;
         this.repr.attach_to_draw("GNode", this);
+        this.repr.registerDragging("GNode", this);
+    }
+    mouse_inside({ x, y }) {
+        let tx = this.position.x - x,
+            ty = this.position.y - y;
+        return (tx ** 2 + ty ** 2 < GNode.geometry.radius ** 2)
     }
     draw() {
+        let strokecolor = "#ccc";
+        if(this.held) strokecolor = "#f00"
         this.repr.context.lineWidth = 5
-        this.repr.circle(GNode.geometry.radius + 1, this.position).stroke("#ccc");
+        this.repr.circle(GNode.geometry.radius + 1, this.position).stroke(strokecolor);
         this.repr.context.lineWidth = 5
         
         this.repr.circle(GNode.geometry.radius, this.position).fill(GNode.geometry.fill_color);
