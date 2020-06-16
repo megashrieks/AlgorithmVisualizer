@@ -16,9 +16,6 @@ const ContextProvider = ({ children }) => {
         dimension.height = can.height;
 
         let drawCtx = canvas.getContext("2d");
-        
-        drawCtx.fillStyle = "#eee";
-        drawCtx.fillRect(0, 0, can.width, can.height);
         let representation = new Representation(can, drawCtx);
         setState({
             canvas, dimension, drawCtx, representation
