@@ -15,6 +15,12 @@ class Drawing{
         func();
         this.context.closePath();
     }
+    draw_line = (start, end) => {
+        this.context.beginPath();
+        this.context.moveTo(start.x, start.y);
+        this.context.lineTo(end.x, end.y);
+        this.context.stroke();
+    }
     pFill(color) {
         let temp = this.fillColor;
         this.context.fillStyle = color;

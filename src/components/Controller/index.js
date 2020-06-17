@@ -9,5 +9,9 @@ export default () => {
             new GNode(context.representation);
             context.representation.draw();
         }}>circle</button>
+
+        <button onClick={() => {
+            context.dispatcher.createDirectedEdge();
+        }}>DEdge</button>
     </div>
 }
