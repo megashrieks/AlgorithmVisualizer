@@ -1,5 +1,6 @@
 import { GNode } from './GNode';
 import { DEdge } from './DEdge';
+import { UDEdge } from './UDEdge';
 
 class Dispatcher{
     repr = null;
@@ -21,8 +22,30 @@ class Dispatcher{
                 if (!held[held.length - 1]) return;
                 end = held[held.length - 1];
                 end.highlight = true;
-                new DEdge(this.repr,start, end);
+                new DEdge(this.repr, start, end);
                 this.unregisterClickListener("DEdge");
+                setTimeout(() => {
+                    start.highlight = false;
+                    end.highlight = false;
+                    this.repr.draw();
+                }, 200);
+            }
+        });
+    }
+    createUnDirectedEdge = () => {
+        let start = null, end = null;
+        this.registerClickListener("UDEdge", held => {
+            if (!start) {
+                if (!held[held.length - 1]) return;
+                start = held[held.length - 1];
+                start.highlight = true;
+            }
+            else {
+                if (!held[held.length - 1]) return;
+                end = held[held.length - 1];
+                end.highlight = true;
+                new UDEdge(this.repr, start, end);
+                this.unregisterClickListener("UDEdge");
                 setTimeout(() => {
                     start.highlight = false;
                     end.highlight = false;

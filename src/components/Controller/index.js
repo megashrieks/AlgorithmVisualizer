@@ -13,5 +13,8 @@ export default () => {
         <button onClick={() => {
             context.dispatcher.createDirectedEdge();
         }}>DEdge</button>
+        <button onClick={() => {
+            context.dispatcher.createUnDirectedEdge();
+        }}>UDEdge</button>
     </div>
 }
