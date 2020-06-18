@@ -1,4 +1,6 @@
 class DEdge{
+    class_identifier = "DEdge";
+    print_arrow = true;
     repr = null;
     start = null;
     end = null;
@@ -8,8 +10,8 @@ class DEdge{
         this.repr = representation;
         this.start = start;
         this.end = end;
-        this.repr.attach_to_draw("DEdge", this);
-        this.repr.registerSelection("DEdge", this);
+        this.repr.attach_to_draw(this.class_identifier, this);
+        this.repr.registerSelection(this.class_identifier, this);
     }
 
     mouse_inside = ({ x, y }) => {
@@ -125,10 +127,11 @@ class DEdge{
         let temp = this.repr.context.lineCap;
         this.repr.context.lineCap = "round";
         this.repr.draw_line(border_start, border_end);
-        let [arrow1,arrow2] = this.get_arrow_vertices(border_start, border_end);
-        this.repr.draw_line(border_end, arrow1);
-        this.repr.draw_line(border_end, arrow2);
-
+        if (this.print_arrow) {
+            let [arrow1, arrow2] = this.get_arrow_vertices(border_start, border_end);
+            this.repr.draw_line(border_end, arrow1);
+            this.repr.draw_line(border_end, arrow2);
+        }
 
         this.repr.context.lineWidth = 1;
         this.repr.context.lineCap = temp;

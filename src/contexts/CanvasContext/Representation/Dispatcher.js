@@ -28,11 +28,6 @@ class Dispatcher{
                 end.highlight = true;
                 new DEdge(this.repr, start, end);
                 this.unregisterClickListener("DEdge");
-                setTimeout(() => {
-                    start.highlight = false;
-                    end.highlight = false;
-                    this.repr.draw();
-                }, 200);
             }
         });
     }
@@ -54,11 +49,6 @@ class Dispatcher{
                 end.highlight = true;
                 new UDEdge(this.repr, start, end);
                 this.unregisterClickListener("UDEdge");
-                setTimeout(() => {
-                    start.highlight = false;
-                    end.highlight = false;
-                    this.repr.draw();
-                }, 200);
             }
         });
     }
