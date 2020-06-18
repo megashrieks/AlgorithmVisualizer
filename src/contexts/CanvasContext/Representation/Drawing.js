@@ -21,6 +21,9 @@ class Drawing{
         this.context.lineTo(end.x, end.y);
         this.context.stroke();
     }
+    get_angle(point1, point2) {
+        return Math.atan2(point2.y - point1.y, point2.x - point1.x);
+    }
     pFill(color) {
         let temp = this.fillColor;
         this.context.fillStyle = color;

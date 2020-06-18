@@ -46,7 +46,7 @@ class Representation extends Drawing{
         clientY -= event.target.offsetTop;
         let flag = false;
         for (let i in this.drag_register) {
-            for (let j in this.drag_register[i]) {
+            for (let j = this.drag_register[i].length - 1; j >= 0;--j) {
                 if (this.drag_register[i][j].mouse_inside({
                     x: clientX,
                     y: clientY
