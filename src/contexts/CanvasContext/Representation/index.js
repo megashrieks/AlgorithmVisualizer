@@ -3,8 +3,10 @@ import { GNode } from './GNode';
 class Representation extends Drawing{
     draw_objects = {};
     drag_register = {};
+    select_register = {};
     mouse_held = [];
     mouse_offset = [];
+    selected = [];
     click_listeners = {};
     constructor(canvas, context) {
         super(canvas, context);
@@ -22,7 +24,12 @@ class Representation extends Drawing{
             this.draw_objects[key] = [structure];
     }
 
-
+    registerSelection = (key, structure) => {
+        if (this.select_register[key])
+            this.select_register[key].push(structure);
+        else
+            this.select_register[key] = [structure];
+    }
 
     registerDragging = (key, structure) => {
         if (this.drag_register[key])
@@ -63,13 +70,29 @@ class Representation extends Drawing{
             }
             if (flag) break;
         }
+        this.selected.forEach(element => {
+            element.unselect();
+        })
+        this.selected.length = 0;
+        for (let i in this.select_register) {
+            for (let j = this.select_register[i].length - 1; j >= 0; --j) {
+                if (this.select_register[i][j].mouse_inside({
+                    x: clientX,
+                    y: clientY
+                })) {
+                    this.select_register[i][j].select();
+                    this.selected.push(this.select_register[i][j]);
+                    break;
+                }
+            }
+        }
     }
     handleMouseUp = _ => {
         for (let i in this.mouse_held) {
             this.mouse_held[i].held = false;
         }
         for (let i in this.click_listeners) {
-            this.click_listeners[i](this.mouse_held);
+            this.click_listeners[i](this.selected);
         }
         this.mouse_held.length = 0;
         this.mouse_offset.length = 0;

@@ -13,14 +13,18 @@ class Dispatcher{
     createDirectedEdge = () => {
         let start = null, end = null;
         this.registerClickListener("DEdge", held => {
+            if (!held.length) return;
+            let selected = null;
+            for (let i = held.length - 1; i >= 0;--i) {
+                if (held[i] instanceof GNode) { selected = held[i]; break;}
+            }
+            if (!selected) return;
             if (!start) {
-                if (!held[held.length - 1]) return;
-                start = held[held.length - 1];
+                start = selected
                 start.highlight = true;
             }
             else {
-                if (!held[held.length - 1]) return;
-                end = held[held.length - 1];
+                end = selected;
                 end.highlight = true;
                 new DEdge(this.repr, start, end);
                 this.unregisterClickListener("DEdge");
@@ -35,14 +39,18 @@ class Dispatcher{
     createUnDirectedEdge = () => {
         let start = null, end = null;
         this.registerClickListener("UDEdge", held => {
+            if (!held.length) return;
+            let selected = null;
+            for (let i = held.length - 1; i >= 0; --i) {
+                if (held[i] instanceof GNode) { selected = held[i]; break; }
+            }
+            if (!selected) return;
             if (!start) {
-                if (!held[held.length - 1]) return;
-                start = held[held.length - 1];
+                start = selected
                 start.highlight = true;
             }
             else {
-                if (!held[held.length - 1]) return;
-                end = held[held.length - 1];
+                end = selected;
                 end.highlight = true;
                 new UDEdge(this.repr, start, end);
                 this.unregisterClickListener("UDEdge");

@@ -24,10 +24,13 @@ class GNode{
         this.position = position;
         this.repr.attach_to_draw("GNode", this);
         this.repr.registerDragging("GNode", this);
+        this.repr.registerSelection("GNode", this);
     }
     mouse_inside({ x, y }) {
         return (this.position.x - x) ** 2 + (this.position.y - y) ** 2 < GNode.geometry.radius ** 2
     }
+    select() { this.highlight = true; }
+    unselect() { this.highlight = false;}
     draw() {
         let strokecolor = "#fff";
         let fill = GNode.geometry.fill_color;

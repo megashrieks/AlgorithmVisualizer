@@ -2,14 +2,60 @@ class DEdge{
     repr = null;
     start = null;
     end = null;
-    weight = "";
+    weight = "50";
+    lineWidth = 3;
     constructor(representation, start, end) {
         this.repr = representation;
         this.start = start;
         this.end = end;
         this.repr.attach_to_draw("DEdge", this);
+        this.repr.registerSelection("DEdge", this);
     }
 
+    mouse_inside = ({ x, y }) => {
+        const dist_allowed = 50+this.lineWidth/2;
+        let start = this.get_border_position(
+            this.start.position,
+            this.end.position,
+            this.start.effective_radius
+        ),
+            end = this.get_border_position(
+                this.end.position,
+                this.start.position,
+                this.end.effective_radius
+            );
+        //check if x,y are in the bounding box first to avoid extra computation
+        let minx = Math.min(start.x, end.x),
+            maxx = Math.max(start.x, end.x),
+            miny = Math.min(start.y, end.y),
+            maxy = Math.max(start.y, end.y);
+        if (maxx - minx < dist_allowed) {
+            let temp = dist_allowed - (maxx - minx) / 2;
+            maxx += temp;
+            minx -= temp;
+        }
+        if (maxy - miny < dist_allowed) {
+            let temp = dist_allowed - (maxy - miny) / 2;
+            maxy += temp;
+            miny -= temp;
+        }
+        if (x < minx || x > maxx || y < miny || y > maxy) return false;
+
+        //get ax+by+c=0 form from start and end point
+        let slope = (end.y - start.y) / (end.x - start.x);
+        let A = -slope,
+            B = 1,
+            C = -(-start.x * slope + start.y);
+        let d = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+        console.log("d", d);
+        return d < 50;
+    }
+    select() {
+        this.draw_color = "#f00";
+    }
+    unselect() {
+        this.draw_color = "#000";
+    }
     get_border_position(start, end, radius) {
         let angle = this.repr.get_angle(start,end);
         return {
@@ -71,8 +117,11 @@ class DEdge{
             this.start.position,
             this.end.effective_radius
         );
+        let tempcolor = this.repr.context.strokeStyle;
+        this.repr.context.strokeStyle = this.draw_color;
+
         this.print_weight(border_start,border_end);
-        this.repr.context.lineWidth = 3;
+        this.repr.context.lineWidth = this.lineWidth;
         let temp = this.repr.context.lineCap;
         this.repr.context.lineCap = "round";
         this.repr.draw_line(border_start, border_end);
@@ -83,6 +132,7 @@ class DEdge{
 
         this.repr.context.lineWidth = 1;
         this.repr.context.lineCap = temp;
+        this.repr.context.strokeStyle = tempcolor;
     }
 
 }
