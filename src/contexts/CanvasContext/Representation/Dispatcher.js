@@ -52,6 +52,13 @@ class Dispatcher{
             }
         });
     }
+    removeElement() {
+        this.registerClickListener("REMOVE_ELEMENT", selected => {
+            let element = selected[selected.length - 1];
+            element.release();
+            this.unregisterClickListener("REMOVE_ELEMENT");
+        })
+    }
 }
 
 export { Dispatcher };

@@ -1,30 +1,50 @@
 class DEdge{
-    class_identifier = "DEdge";
+    static __member_count = 0;
+    static class_identifier = "DEdge";
+    id = null;
     print_arrow = true;
     repr = null;
     start = null;
     end = null;
     weight = "50";
     lineWidth = 3;
+    get_id() { return DEdge.class_identifier + DEdge.__member_count++; }
+    get_cid() { return DEdge.class_identifier; }
     constructor(representation, start, end) {
+        this.id = this.get_id();
         this.repr = representation;
         this.start = start;
         this.end = end;
-        this.repr.attach_to_draw(this.class_identifier, this);
-        this.repr.registerSelection(this.class_identifier, this);
+        this.repr.attach_to_draw(this.get_cid(), this);
+        this.repr.registerSelection(this.get_cid(), this);
+        this.add_edge_to_node();
+    }
+    add_edge_to_node = ()=> {
+        this.start.add_adjacent(this.weight, this.end, this.release, this.id);
+        this.end.add_dependant(this);
+    }
+    remove_edge_from_node = () => {
+        this.start.remove_adjacent(this.id);
+        this.end.remove_dependant(this);
+    }
+    release = () => {
+        this.remove_edge_from_node();
+        this.repr.detach_from_draw(this.get_cid(), this);
+        this.repr.unregisterSelection(this.get_cid(), this);
+        delete this;
     }
 
-    mouse_inside = ({ x, y }) => {
-        const dist_allowed = 50+this.lineWidth/2;
+    mouse_inside({ x, y }) {
+        const dist_allowed = 50;
         let start = this.get_border_position(
             this.start.position,
             this.end.position,
-            this.start.effective_radius
+            this.start.effective_radius - this.lineWidth
         ),
             end = this.get_border_position(
                 this.end.position,
                 this.start.position,
-                this.end.effective_radius
+                this.end.effective_radius - this.lineWidth
             );
         //check if x,y are in the bounding box first to avoid extra computation
         let minx = Math.min(start.x, end.x),
@@ -49,8 +69,7 @@ class DEdge{
             B = 1,
             C = -(-start.x * slope + start.y);
         let d = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
-        console.log("d", d);
-        return d < 50;
+        return d < dist_allowed;
     }
     select() {
         this.draw_color = "#f00";
@@ -90,7 +109,6 @@ class DEdge{
         let offset_angle = Math.PI / 2;
         if (end.x < start.x) offset_angle *= -1;
         let angle = this.repr.get_angle(start, end) - offset_angle;
-        // console.log("slope", (start.y-end.y)/(start.x-end.x))
         let center = {
             x: (start.x + end.x) / 2,
             y: (start.y + end.y) / 2

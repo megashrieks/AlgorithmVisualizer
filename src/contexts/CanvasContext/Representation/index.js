@@ -16,27 +16,35 @@ class Representation extends Drawing{
         canvas.onclick = this.handleClick;
     }
 
-
-    attach_to_draw = (key, structure) => {
-        if (this.draw_objects[key])
-            this.draw_objects[key].push(structure);
+    push_if_exists(object, key, structure) {
+        if (object[key])
+            object[key].push(structure);
         else
-            this.draw_objects[key] = [structure];
+            object[key] = [structure];
     }
+    remove_if_exists(object, key, structure) {
+        if (object[key]) {
+            let i;
+            for (i = 0; i < object[key].length;++i) {
+                if (object[key][i].id === structure.id) break;
+            }
+            object[key].splice(i,1);
+            if (!object[key].length) delete object[key];
+        }
+    }
+    attach_to_draw = (key, structure) => this.push_if_exists(this.draw_objects, key, structure);
+    registerSelection = (key, structure)  => this.push_if_exists(this.select_register, key, structure);
+    registerDragging = (key, structure) => this.push_if_exists(this.drag_register, key, structure);
+    
+    detach_from_draw = (key, structure) => {
+        console.log("draw detached", key, structure);
+        this.remove_if_exists(this.draw_objects, key, structure);
+        console.log("draw array", this.draw_objects);
+    }
+    unregisterSelection = (key, structure) => this.remove_if_exists(this.select_register, key, structure);
+    unregisterDragging = (key, structure) => this.remove_if_exists(this.drag_register, key, structure);
 
-    registerSelection = (key, structure) => {
-        if (this.select_register[key])
-            this.select_register[key].push(structure);
-        else
-            this.select_register[key] = [structure];
-    }
 
-    registerDragging = (key, structure) => {
-        if (this.drag_register[key])
-            this.drag_register[key].push(structure);
-        else
-            this.drag_register[key] = [structure];
-    }
     registerClickListener = (key, func) => {
         if (this.click_listeners[key]) return false;
         this.click_listeners[key] = func;

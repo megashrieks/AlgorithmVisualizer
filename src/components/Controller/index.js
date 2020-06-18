@@ -8,7 +8,7 @@ export default () => {
         <button onClick={() => {
             new GNode(context.representation);
             context.representation.draw();
-        }}>circle</button>
+        }}>GNode</button>
 
         <button onClick={() => {
             context.dispatcher.createDirectedEdge();
@@ -16,5 +16,8 @@ export default () => {
         <button onClick={() => {
             context.dispatcher.createUnDirectedEdge();
         }}>UDEdge</button>
+        <button onClick={() => {
+            context.dispatcher.removeElement();
+        }}>Remove Element</button>
     </div>
 }
