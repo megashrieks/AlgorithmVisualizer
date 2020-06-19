@@ -6,7 +6,7 @@ class DEdge{
     repr = null;
     start = null;
     end = null;
-    weight = "50";
+    weight = "";
     lineWidth = 3;
     get_id() { return DEdge.class_identifier + DEdge.__member_count++; }
     get_cid() { return DEdge.class_identifier; }

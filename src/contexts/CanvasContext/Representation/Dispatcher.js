@@ -4,8 +4,11 @@ import { UDEdge } from './UDEdge';
 
 class Dispatcher{
     repr = null;
-    constructor(representation) {
+    setState = null;
+    constructor(representation,setState) {
         this.repr = representation;
+        this.setState = setState;
+        this.editListener();
     }
     registerClickListener = (key, func) => this.repr.registerClickListener(key,func);
     unregisterClickListener = key => this.repr.unregisterClickListener(key);
@@ -54,9 +57,48 @@ class Dispatcher{
     }
     removeElement() {
         this.registerClickListener("REMOVE_ELEMENT", selected => {
+            if (!selected.length) return;
             let element = selected[selected.length - 1];
             element.release();
             this.unregisterClickListener("REMOVE_ELEMENT");
+        })
+    }
+    editListener() {
+        this.registerClickListener("EDIT_ELEMENT", selected => {
+            if (!selected.length) {
+                this.setState(state => ({
+                    ...state,
+                    edge_selected: false,
+                    node_selected: false,
+                    change_value: null,
+                    element_value:""
+                }));
+                return;
+            }
+            console.log(selected);
+            let element = selected[selected.length - 1];
+            if (element instanceof GNode)
+                this.setState(state => ({
+                    ...state,
+                    edge_selected: false,
+                    node_selected: true,
+                    element_value:element.value,
+                    change_value: value => {
+                        element.value = value;
+                        this.repr.draw();
+                    }
+                }));
+            else
+                this.setState(state => ({
+                    ...state,
+                    edge_selected: true,
+                    node_selected: false,
+                    element_value:element.weight,
+                    change_value: value => {
+                        element.weight = value;
+                        this.repr.draw();
+                    }
+                }));
         })
     }
 }

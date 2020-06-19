@@ -14,6 +14,7 @@ class GNode{
     held = false;
     highlight = false;
     class_identifier = "GNode";
+    value = null;
 
     effective_radius = GNode.geometry.radius + GNode.geometry.line_width;
     adjacent_elements = [];
@@ -25,6 +26,7 @@ class GNode{
     }) {
         GNode.__member_count++;
         this.id = GNode.__member_count;
+        this.value = this.id;
         this.repr = representation;
         this.position = position;
         this.repr.attach_to_draw(this.class_identifier, this);
@@ -32,14 +34,12 @@ class GNode{
         this.repr.registerSelection(this.class_identifier, this);
     }
     release() {
-        console.log("release called on ", this.id);
         this.repr.detach_from_draw(this.class_identifier, this);
         this.repr.unregisterDragging(this.class_identifier, this);
         this.repr.unregisterSelection(this.class_identifier, this);
 
         for (let i in this.adjacent_elements) {
             if (!this.adjacent_elements[i]) continue;
-            console.log("cleanup error : ",i,this.adjacent_elements[i])
             this.adjacent_elements[i].cleanup();
         }
         for (let i in this.dependants) {
@@ -90,7 +90,7 @@ class GNode{
         this.repr.context.lineWidth = 1
         
         this.repr.circle(GNode.geometry.radius, this.position).fill(fill);
-        this.repr.center_text(this.id, this.position, GNode.geometry.text_size)
+        this.repr.center_text(this.value, this.position, GNode.geometry.text_size)
             .fill(GNode.geometry.text_color);
     }
 }

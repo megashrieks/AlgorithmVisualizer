@@ -9,8 +9,15 @@ const ContextProvider = ({ children }) => {
         drawCtx: null,
         dimension: { width: 0, height: 0 },
         representation: null,
-        dispatcher:null
+        dispatcher: null,
+        edge_selected: false,
+        node_selected: false,
+        change_value: null,
+        element_value:"",
     });
+    const setValue = value => {
+        setState(state => ({ ...state, element_value: value }));
+    }
     const setCanvas = can => {
         let canvas = can;
         let dimension = {};
@@ -19,9 +26,9 @@ const ContextProvider = ({ children }) => {
 
         let drawCtx = canvas.getContext("2d");
         let representation = new Representation(can, drawCtx);
-        let dispatcher = new Dispatcher(representation);
+        let dispatcher = new Dispatcher(representation, setState);
         setState({
-            canvas, dimension, drawCtx, representation, dispatcher
+            ...state, canvas, dimension, drawCtx, representation, dispatcher,setValue
         });
     }
 

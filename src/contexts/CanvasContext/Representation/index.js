@@ -36,11 +36,7 @@ class Representation extends Drawing{
     registerSelection = (key, structure)  => this.push_if_exists(this.select_register, key, structure);
     registerDragging = (key, structure) => this.push_if_exists(this.drag_register, key, structure);
     
-    detach_from_draw = (key, structure) => {
-        console.log("draw detached", key, structure);
-        this.remove_if_exists(this.draw_objects, key, structure);
-        console.log("draw array", this.draw_objects);
-    }
+    detach_from_draw = (key, structure) => {this.remove_if_exists(this.draw_objects, key, structure);}
     unregisterSelection = (key, structure) => this.remove_if_exists(this.select_register, key, structure);
     unregisterDragging = (key, structure) => this.remove_if_exists(this.drag_register, key, structure);
 
