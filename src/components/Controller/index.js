@@ -1,12 +1,12 @@
 import React, {  useContext } from 'react';
 import { CanvasContext } from '../../contexts/CanvasContext';
-import { GNode } from '../../contexts/CanvasContext/Representation/Representation';
+import { Node } from '../../contexts/CanvasContext/Representation/UserClasses';
 import './Controller.css';
 export default () => {
     let context = useContext(CanvasContext);
     return <div className="canvas-controller">
         <button onClick={() => {
-            new GNode(context.representation);
+            new Node(context.representation);
             context.representation.draw();
         }}>GNode</button>
 

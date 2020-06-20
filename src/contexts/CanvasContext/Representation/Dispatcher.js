@@ -24,11 +24,11 @@ class Dispatcher{
             if (!selected) return;
             if (!start) {
                 start = selected
-                start.highlight = true;
+                start.select();
             }
             else {
                 end = selected;
-                end.highlight = true;
+                end.select()
                 new DEdge(this.repr, start, end);
                 this.unregisterClickListener("DEdge");
             }
@@ -45,11 +45,11 @@ class Dispatcher{
             if (!selected) return;
             if (!start) {
                 start = selected
-                start.highlight = true;
+                start.select();
             }
             else {
                 end = selected;
-                end.highlight = true;
+                end.select();
                 new UDEdge(this.repr, start, end);
                 this.unregisterClickListener("UDEdge");
             }

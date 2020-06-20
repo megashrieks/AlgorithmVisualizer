@@ -12,7 +12,7 @@ class GNode{
     repr = null;
     position = null;
     held = false;
-    highlight = false;
+    highlight_node = false;
     class_identifier = "GNode";
     value = null;
 
@@ -33,6 +33,11 @@ class GNode{
         this.repr.registerDragging(this.class_identifier, this);
         this.repr.registerSelection(this.class_identifier, this);
     }
+
+    interface() {
+        return;
+    }
+
     release() {
         this.repr.detach_from_draw(this.class_identifier, this);
         this.repr.unregisterDragging(this.class_identifier, this);
@@ -77,13 +82,13 @@ class GNode{
     mouse_inside({ x, y }) {
         return (this.position.x - x) ** 2 + (this.position.y - y) ** 2 < GNode.geometry.radius ** 2
     }
-    select() { this.highlight = true; }
-    unselect() { this.highlight = false;}
+    select = () => this.highlight_node = true;
+    unselect = () => this.highlight_node = false;
     draw() {
         let strokecolor = "#fff";
         let fill = GNode.geometry.fill_color;
         if (this.held) strokecolor = "rgb(250,250,56)";
-        if (this.highlight) fill = GNode.geometry.highlight_color;
+        if (this.highlight_node) fill = GNode.geometry.highlight_color;
 
 
         this.repr.context.lineWidth = GNode.geometry.line_width;

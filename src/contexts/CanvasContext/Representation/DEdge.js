@@ -8,7 +8,7 @@ class DEdge{
     end = null;
     weight = "";
     lineWidth = 3;
-    highlight = false;
+    highlight_edge = false;
     draw_color = "#000";
 
     get_id() { return DEdge.class_identifier + DEdge.__member_count++; }
@@ -74,11 +74,17 @@ class DEdge{
         let d = Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
         return d < dist_allowed;
     }
+    highlight = (value = true) => {
+        if (value)
+            this.repr.add_to_queue(() => this.select());
+        else
+            this.repr.add_to_queue(() => this.unselect());
+    }
     select() {
-        this.highlight = true;
+        this.highlight_edge = true;
     }
     unselect() {
-        this.highlight = false;
+        this.highlight_edge = false;
     }
     get_border_position(start, end, radius) {
         let angle = this.repr.get_angle(start,end);
@@ -127,7 +133,7 @@ class DEdge{
 
     draw() {
         let color = this.draw_color;
-        if (this.highlight) color = "rgb(56,56,250)";
+        if (this.highlight_edge) color = "rgb(56,56,250)";
         //TODO: detect the return false from the representation draw loop and handle it
         if (!this.start || !this.end) return false;
 

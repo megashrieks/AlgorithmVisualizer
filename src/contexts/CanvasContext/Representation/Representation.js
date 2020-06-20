@@ -9,7 +9,9 @@ class Representation extends Drawing{
     selected = [];
     click_listeners = {};
     animation = {
-        playing:false,
+        playing: false,
+        grouping:false,
+        group_execution:[],
         execution_queue: [],
         execution_pointer: 0,
         delay: 500,
@@ -23,7 +25,22 @@ class Representation extends Drawing{
         canvas.onmousemove = this.handleMouseMove;
         canvas.onclick = this.handleClick;
     }
-    add_to_queue = func => this.animation.execution_queue.push(func);
+    add_to_queue = func => {
+        if (this.animation.grouping)
+            this.animation.group_execution.push(func);
+        else
+            this.animation.execution_queue.push(func);
+    }
+    start_group = () => {
+        this.animation.group_execution.length = 0;
+        this.animation.grouping = true;
+    }
+    end_group = () => {
+        this.animation.grouping = false;
+        this.add_to_queue(() => {
+            this.animation.group_execution.forEach(func => {func()});
+        })
+    }
     clear_queue() {
         this.animation.execution_queue.length = 0;
         this.animation.execution_pointer = 0;
