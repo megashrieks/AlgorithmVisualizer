@@ -1,6 +1,7 @@
 import React,{ useState, createContext } from 'react';
-import { Representation } from './Representation/';
+import { Representation } from './Representation/Representation';
 import { Dispatcher } from './Representation/Dispatcher';
+import {run} from './Representation/run'
 const CanvasContext = createContext();
 
 const ContextProvider = ({ children }) => {
@@ -31,9 +32,15 @@ const ContextProvider = ({ children }) => {
             ...state, canvas, dimension, drawCtx, representation, dispatcher,setValue
         });
     }
-
+    const runProgram = async () => {
+        await run({
+            input: state.dispatcher.input,
+            show: state.representation.add_to_queue
+        });
+        state.representation.start_execution();
+    }
     return <CanvasContext.Provider value={{
-        setCanvas, ...state
+        setCanvas,runProgram, ...state
     }}>
         {children}
     </CanvasContext.Provider>

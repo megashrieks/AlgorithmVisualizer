@@ -8,6 +8,14 @@ class Representation extends Drawing{
     mouse_offset = [];
     selected = [];
     click_listeners = {};
+    animation = {
+        playing:false,
+        execution_queue: [],
+        execution_pointer: 0,
+        delay: 500,
+        interval_pointer: null
+    };
+
     constructor(canvas, context) {
         super(canvas, context);
         canvas.onmousedown = this.handleMouseDown;
@@ -15,7 +23,28 @@ class Representation extends Drawing{
         canvas.onmousemove = this.handleMouseMove;
         canvas.onclick = this.handleClick;
     }
-
+    add_to_queue = func => this.animation.execution_queue.push(func);
+    clear_queue() {
+        this.animation.execution_queue.length = 0;
+        this.animation.execution_pointer = 0;
+    }
+    
+    start_execution () {
+        this.animation.playing = true;
+        this.animation.interval_pointer = setInterval(() => {
+            if (this.animation.execution_pointer >= this.animation.execution_queue.length) {
+                clearInterval(this.animation.interval_pointer);
+                this.animation.playing = false;
+                return;
+            }
+            this.animation.execution_queue[this.animation.execution_pointer++]();
+            this.draw();
+        }, this.animation.delay);
+    }
+    stop_execution() {
+        this.animation.playing = false;
+        clearInterval(this.animation.interval_pointer);
+    }
     push_if_exists(object, key, structure) {
         if (object[key])
             object[key].push(structure);

@@ -8,6 +8,9 @@ class DEdge{
     end = null;
     weight = "";
     lineWidth = 3;
+    highlight = false;
+    draw_color = "#000";
+
     get_id() { return DEdge.class_identifier + DEdge.__member_count++; }
     get_cid() { return DEdge.class_identifier; }
     constructor(representation, start, end) {
@@ -20,7 +23,7 @@ class DEdge{
         this.add_edge_to_node();
     }
     add_edge_to_node = ()=> {
-        this.start.add_adjacent(this.weight, this.end, this.release, this.id);
+        this.start.add_adjacent(this.weight, this.end, this.release,this, this.id);
         this.end.add_dependant(this);
     }
     remove_edge_from_node = () => {
@@ -72,10 +75,10 @@ class DEdge{
         return d < dist_allowed;
     }
     select() {
-        this.draw_color = "#f00";
+        this.highlight = true;
     }
     unselect() {
-        this.draw_color = "#000";
+        this.highlight = false;
     }
     get_border_position(start, end, radius) {
         let angle = this.repr.get_angle(start,end);
@@ -123,7 +126,8 @@ class DEdge{
     }
 
     draw() {
-
+        let color = this.draw_color;
+        if (this.highlight) color = "rgb(56,56,250)";
         //TODO: detect the return false from the representation draw loop and handle it
         if (!this.start || !this.end) return false;
 
@@ -138,7 +142,7 @@ class DEdge{
             this.end.effective_radius
         );
         let tempcolor = this.repr.context.strokeStyle;
-        this.repr.context.strokeStyle = this.draw_color;
+        this.repr.context.strokeStyle = color;
 
         this.print_weight(border_start,border_end);
         this.repr.context.lineWidth = this.lineWidth;

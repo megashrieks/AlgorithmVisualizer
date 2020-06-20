@@ -11,8 +11,8 @@ class UDEdge extends DEdge{
         return UDEdge.class_identifier;
     }
     add_edge_to_node=()=> {
-        this.start.add_adjacent(this.weight, this.end, this.id, this.remove_edge_from_node);
-        this.end.add_adjacent(this.weight, this.start, this.id, this.remove_edge_from_node);
+        this.start.add_adjacent(this.weight, this.end, this.remove_edge_from_node,this, this.id);
+        this.end.add_adjacent(this.weight, this.start, this.remove_edge_from_node,this, this.id);
     }
     remove_edge_from_node=()=> {
         this.start.remove_adjacent(this.id);

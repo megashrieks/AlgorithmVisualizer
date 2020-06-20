@@ -75,7 +75,6 @@ class Dispatcher{
                 }));
                 return;
             }
-            console.log(selected);
             let element = selected[selected.length - 1];
             if (element instanceof GNode)
                 this.setState(state => ({
@@ -99,6 +98,24 @@ class Dispatcher{
                         this.repr.draw();
                     }
                 }));
+        })
+    }
+    input = (type, quantity) => {
+        return new Promise((resolve, _) => {
+            let result = [];
+            this.registerClickListener("INPUT", selected => {
+                if (!selected.length) return;
+                for (let index = selected.length; index >= 0; --index) {
+                    if (selected[index] instanceof type) {
+                        result.push(selected[index]);
+                        if (result.length == quantity) {
+                            this.unregisterClickListener("INPUT");
+                            resolve(result);
+                        }
+                        return;
+                    }
+                }
+            })
         })
     }
 }

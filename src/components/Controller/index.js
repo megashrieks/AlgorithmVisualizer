@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, {  useContext } from 'react';
 import { CanvasContext } from '../../contexts/CanvasContext';
-import { GNode } from '../../contexts/CanvasContext/Representation';
+import { GNode } from '../../contexts/CanvasContext/Representation/Representation';
 import './Controller.css';
 export default () => {
     let context = useContext(CanvasContext);
@@ -19,6 +19,7 @@ export default () => {
         <button onClick={() => {
             context.dispatcher.removeElement();
         }}>Remove Element</button>
+        <button onClick={() => context.runProgram()}>Run Program</button>
         {(context.edge_selected || context.node_selected) && <div>
             <label>{(context.edge_selected && "weight") || (context.node_selected && "value")}</label>
             <input value={context.element_value} onChange={({ target: { value } }) => {

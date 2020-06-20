@@ -51,11 +51,12 @@ class GNode{
         delete this.dependants;
         delete this;
     }
-    add_adjacent(weight, element,cleanup, id) {
+    add_adjacent(weight, element,cleanup, object, id) {
         this.adjacent_elements.push({
             weight,
             element,
-            cleanup
+            cleanup,
+            edge:object
         });
         this.adjacent_elements_map[id] = this.adjacent_elements.length - 1;
     }
@@ -65,7 +66,7 @@ class GNode{
         for (i in this.dependants) {
             if (this.dependants[i] === element) break;
         }
-        this.dependants.splice(i);
+        this.dependants[i] = null;
     }
     remove_adjacent(id) {
         let index = this.adjacent_elements_map[id];
