@@ -130,7 +130,7 @@ class Representation extends Drawing{
                     x: clientX,
                     y: clientY
                 })) {
-                    this.select_register[i][j].select();
+                    this.select_register[i][j].select({x:clientX,y:clientY});
                     this.selected.push(this.select_register[i][j]);
                     break;
                 }
