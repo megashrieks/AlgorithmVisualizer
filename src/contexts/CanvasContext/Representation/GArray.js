@@ -2,7 +2,11 @@ class GArray{
     static __class_identifier = "GArray";
     static __member_count = 0;
     id = null;
-
+    static geometry = {
+        highlight_color: "rgb(56,56,250)",
+        index_color: "#333",
+        index_highlight_color:"red"
+    }
     repr = null;
     value = null;
     dimensions = null;
@@ -10,7 +14,7 @@ class GArray{
     position = null;
     highlight_array = false;
     select_position = { row:-1,col:-1 };
-    
+    highlight_indices = [];
     get_cid = () => GArray.__class_identifier;
     get_id = () => this.get_cid() + GArray.__member_count++;
     constructor(representation, {
@@ -77,6 +81,9 @@ class GArray{
                 y: position.y
             }, { top: top_length <= i });
     }
+    highlight_index({ row, col }) {
+        this.highlight_indices.push({ row, col });
+    }
     select({ x, y }) {
         this.highlight_array = true;
         x -= this.position.x;
@@ -89,13 +96,15 @@ class GArray{
         this.highlight_array = false;
     }
     draw() {
+        let hr = new Set();
+        let hc = new Set();
         let temp = this.repr.context.strokeStyle;
         if (!this.value.length) return;
         if (this.highlight_array) {
-            this.repr.context.strokeStyle = "#f00";
+            this.repr.context.strokeStyle = GArray.geometry.highlight_color;
             let { row, col } = this.select_position;
             let t = this.repr.context.fillStyle;
-            this.repr.context.fillStyle = "rgb(56,56,250)";
+            this.repr.context.fillStyle = GArray.geometry.highlight_color;
             this.repr.context.fillRect(
                 this.position.x + col * this.measure.x,
                 this.position.y + row * this.measure.y,
@@ -103,19 +112,67 @@ class GArray{
                 this.measure.y
             );
             this.repr.context.fillStyle = t;
+            hr.add(row);
+            hc.add(col);
         }
+
+        for (let i in this.highlight_indices) {
+            let { row, col } = this.highlight_indices[i];
+            let t = this.repr.context.fillStyle;
+            this.repr.context.fillStyle = GArray.geometry.highlight_color;
+            this.repr.context.fillRect(
+                this.position.x + col * this.measure.x,
+                this.position.y + row * this.measure.y,
+                this.measure.x,
+                this.measure.y
+            );
+            this.repr.context.fillStyle = t;
+            hr.add(row);
+            hc.add(col);
+        }
+
         if (this.dimensions == 2) {
+
+
+            
+            let pos = { ...this.position };
+            pos.x -= Math.min(this.measure.x,this.measure.y);
+            for (let i = 0; i < this.value.length; ++i) {
+                this.repr.center_text(i, {
+                    x: pos.x + Math.min(this.measure.x, this.measure.y) / 2,
+                    y: pos.y + this.measure.y*i + this.measure.y / 2
+                }, "10px").fill(hr.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+            }
+            let max_len = this.value[0].length;
             this.draw_single_d(this.value[0], {
                 x: this.position.x,
                 y: this.position.y,
             });
-            for (let i = 1; i < this.value.length;++i)
+            for (let i = 1; i < this.value.length; ++i){
+                max_len = Math.max(max_len,this.value[i].length)
                 this.draw_single_d(this.value[i], {
                     x: this.position.x,
                     y: this.position.y + i * this.measure.y,
-                },this.value[i-1].length);
+                }, this.value[i - 1].length);
+            }
+            pos = { ...this.position };
+            pos.y -= Math.min(this.measure.x, this.measure.y);
+            for (let i = 0; i < max_len; ++i) {
+                this.repr.center_text(i, {
+                    x: this.measure.x * i + pos.x + this.measure.x / 2,
+                    y: pos.y + Math.min(this.measure.x, this.measure.y) / 2
+                }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+            }
         } else {
             this.draw_single_d(this.value, this.position);
+            let pos = { ...this.position };
+            pos.x += Math.min(this.measure.x, this.measure.y);
+            for (let i = 0; i < this.value.length; ++i){
+                this.repr.center_text(i, {
+                    x: this.measure.x*i + pos.x + this.measure.x / 2,
+                    y: pos.y + this.measure.y / 2
+                }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+            }
         }
         this.repr.context.strokeStyle = temp;
     }
