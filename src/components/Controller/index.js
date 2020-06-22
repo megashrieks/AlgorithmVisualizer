@@ -34,15 +34,16 @@ export default () => {
             <button onClick={() => {
                 let arr = [];
                 let x = Math.random() * 10;
+                let z = Math.random();
                 for (let i = 0; i < ~~x; ++i){
                     let y = Math.random() * 10;
                     let tarr = [];
                     for (let j = 0; j < ~~y; ++j) tarr.push(~~(Math.random() * 500));
-                    arr.push(tarr);
+                    if (z > 0.5) arr.push(tarr);
+                    else arr.push(tarr[0] || 1)
                 }
                 new GArray(context.representation, {
                     value: arr,
-                    dimensions: 2,
                     measure:{x:50,y:30}
                 });
                 context.representation.draw();

@@ -20,7 +20,7 @@ class GArray{
     get_id = () => this.get_cid() + GArray.__member_count++;
     constructor(representation, {
         value,
-        dimensions = 1,
+        dimensions = value[0] instanceof Array ? 2 : 1,
         measure = { x: 50, y: 30 },
         position = {
             x: representation.canvas.width * Math.random(),

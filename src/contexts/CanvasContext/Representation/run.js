@@ -4,16 +4,11 @@ let visited = [-1];
 let v,repr;
 const run = async ({ input, repr: r }) => {
     repr = r;
-    if (!v) {
-        v = new VArray(repr, {
-            value: visited,
-            dimensions: 1,
-        });
-        repr.draw();
-    } else {
-        visited = [-1];
-        v.value = visited;
-    }
+    if (v) v.release();
+    visited = [-1];
+    v = new VArray(repr, {
+        value: visited,
+    });
     const [start_node] = await input(Node, 1);
     DFS(start_node);
 }
@@ -24,9 +19,9 @@ const DFS = (node, edge) => {
     v.value = visited;
     if (visited[node.id-1] != -1) return;
     if (edge) edge.highlight();
-    node.highlight();
-    visited[node.id-1] = 1;
     repr.start_group();
+        node.highlight();
+        visited[node.id-1] = 1;
         v.value = visited;
         v.highlight(node.id-1);
     repr.end_group();
