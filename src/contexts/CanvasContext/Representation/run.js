@@ -30,7 +30,6 @@ const DFS = (node, edge) => {
         v.value = visited;
         v.highlight(node.id-1);
     repr.end_group();
-    console.log(node.adjacent);
     node.adjacent.forEach((element, index) => {
         DFS(element, node.edges[index]);
     });
