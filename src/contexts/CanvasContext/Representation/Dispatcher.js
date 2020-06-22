@@ -108,7 +108,7 @@ class Dispatcher{
                 for (let index = selected.length; index >= 0; --index) {
                     if (selected[index] instanceof type) {
                         result.push(selected[index]);
-                        if (result.length == quantity) {
+                        if (result.length === quantity) {
                             this.unregisterClickListener("INPUT");
                             resolve(result);
                         }

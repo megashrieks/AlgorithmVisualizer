@@ -35,7 +35,8 @@ const ContextProvider = ({ children }) => {
     const runProgram = async () => {
         await run({
             input: state.dispatcher.input,
-            show: state.representation.add_to_queue
+            show: state.representation.add_to_queue,
+            repr:state.representation
         });
         state.representation.start_execution();
     }

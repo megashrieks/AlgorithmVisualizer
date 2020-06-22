@@ -37,8 +37,9 @@ class Representation extends Drawing{
     }
     end_group = () => {
         this.animation.grouping = false;
+        let temp = [...this.animation.group_execution];
         this.add_to_queue(() => {
-            this.animation.group_execution.forEach(func => {func()});
+            temp.forEach(func => {func()});
         })
     }
     clear_queue() {
