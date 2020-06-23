@@ -14,7 +14,7 @@ class Representation extends Drawing{
         group_execution:[],
         execution_queue: [],
         execution_pointer: 0,
-        delay: 500,
+        delay: 50,
         interval_pointer: null
     };
 
@@ -79,11 +79,17 @@ class Representation extends Drawing{
             if (!object[key].length) delete object[key];
         }
     }
-    attach_to_draw = (key, structure) => this.push_if_exists(this.draw_objects, key, structure);
+    attach_to_draw = (key, structure) => {
+        this.push_if_exists(this.draw_objects, key, structure);
+        this.draw();
+    }
     registerSelection = (key, structure)  => this.push_if_exists(this.select_register, key, structure);
     registerDragging = (key, structure) => this.push_if_exists(this.drag_register, key, structure);
     
-    detach_from_draw = (key, structure) => {this.remove_if_exists(this.draw_objects, key, structure);}
+    detach_from_draw = (key, structure) => {
+        this.remove_if_exists(this.draw_objects, key, structure);
+        this.draw();
+    }
     unregisterSelection = (key, structure) => this.remove_if_exists(this.select_register, key, structure);
     unregisterDragging = (key, structure) => this.remove_if_exists(this.drag_register, key, structure);
 

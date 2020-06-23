@@ -20,29 +20,26 @@ class GArray{
     get_id = () => this.get_cid() + GArray.__member_count++;
     constructor(representation, {
         value,
+        show=true,
         dimensions = value[0] instanceof Array ? 2 : 1,
-        measure = { x: 50, y: 30 },
+        measure = { x: 30, y: 30 },
         position = {
-            x: representation.canvas.width * Math.random(),
-            y: representation.canvas.height * Math.random()
+            x: representation.canvas.width * .4,
+            y: representation.canvas.height * .4
         }
     }) {
         this.id = this.get_id();
         this.repr = representation;
-        this.array = [...value];
-        this.label = [...value];
+        this.array = JSON.parse(JSON.stringify(value));
+        this.label = JSON.parse(JSON.stringify(value));
         this.dimensions = dimensions;
         this.measure = measure;
         this.position = position;
         this.highlight_indices = new Set();
-        this.repr.attach_to_draw(this.get_cid, this);
-        this.repr.registerSelection(this.get_cid, this);
-        this.repr.registerDragging(this.get_cid(), this);
+        if (show) this.show();
     }
     release() {
-        this.repr.detach_from_draw(this.get_cid, this);
-        this.repr.unregisterSelection(this.get_cid, this);
-        this.repr.unregisterDragging(this.get_cid(), this);
+        this.hide();
     }
     mouse_inside({ x, y }) {
         x -= this.position.x;
@@ -70,7 +67,7 @@ class GArray{
         this.repr.center_text(array, {
             x: x + this.measure.x / 2,
             y: y + this.measure.y / 2
-        }).fill();
+        },this.measure.y / 2+"px").fill();
     }
     draw_single_d(array, position,top_length=0) {
         if (!array.length) return;
@@ -117,7 +114,7 @@ class GArray{
         }
 
         for (let i of this.highlight_indices.values()) {
-            let { row, col } = i;
+            let { row, col } = JSON.parse(i);
             let t = this.repr.context.fillStyle;
             this.repr.context.fillStyle = GArray.geometry.highlight_color;
             this.repr.context.fillRect(
