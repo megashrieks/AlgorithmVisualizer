@@ -1,6 +1,8 @@
 import { GNode } from './GNode';
 import { DEdge } from './DEdge';
 import { UDEdge } from './UDEdge';
+import { Edge } from './Edge';
+import { VArray } from './UserClasses/';
 
 class Dispatcher{
     repr = null;
@@ -68,33 +70,47 @@ class Dispatcher{
             if (!selected.length) {
                 this.setState(state => ({
                     ...state,
-                    edge_selected: false,
-                    node_selected: false,
+                    selected: false,
                     change_value: null,
                     element_value:""
                 }));
                 return;
             }
             let element = selected[selected.length - 1];
-            if (element instanceof GNode)
-                this.setState(state => ({
-                    ...state,
-                    edge_selected: false,
-                    node_selected: true,
-                    element_value:element.value,
-                    change_value: value => {
-                        element.value = value;
-                        this.repr.draw();
+            let value,func;
+            if (element instanceof GNode) {
+                value = element.value;
+                func = v => element.value = v;
+            }
+            else if (element instanceof Edge) {
+                value = element.weight;
+                func = v => element.weight = v;
+            } else if (element instanceof VArray) {
+                if (element.dimensions == 1) {
+                    let col = element.select_position.col;
+                    value = element.value[col];
+                    func = v => {
+                        element.array[col] = v;
+                        element.label[col] = v;
                     }
-                }));
-            else
+                } else {
+                    let row = element.select_position.row,
+                        col = element.select_position.col;
+                    value = element.array[row][col];
+                    func = v => {
+                        element.array[row][col] = v;
+                        element.label[row][col] = v;
+                    }
+                }
+                    
+            }
+            if(func)
                 this.setState(state => ({
                     ...state,
-                    edge_selected: true,
-                    node_selected: false,
-                    element_value:element.weight,
+                    selected: true,
+                    element_value:value,
                     change_value: value => {
-                        element.weight = value;
+                        func(value);
                         this.repr.draw();
                     }
                 }));

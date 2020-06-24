@@ -11,8 +11,7 @@ const ContextProvider = ({ children }) => {
         dimension: { width: 0, height: 0 },
         representation: null,
         dispatcher: null,
-        edge_selected: false,
-        node_selected: false,
+        selected: false,
         change_value: null,
         element_value:"",
     });

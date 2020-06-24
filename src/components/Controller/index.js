@@ -1,7 +1,6 @@
 import React, {  useContext } from 'react';
 import { CanvasContext } from '../../contexts/CanvasContext';
-import { Node } from '../../contexts/CanvasContext/Representation/UserClasses';
-import { GArray } from '../../contexts/CanvasContext/Representation/GArray';
+import { Node, VArray } from '../../contexts/CanvasContext/Representation/UserClasses';
 import './Controller.css';
 export default () => {
     let context = useContext(CanvasContext);
@@ -22,8 +21,8 @@ export default () => {
         }}>Remove Element</button>
         <button onClick={() => context.runProgram()}>Run Program</button>
         <div>
-        {(context.edge_selected || context.node_selected) && <div>
-            <label>{(context.edge_selected && "weight") || (context.node_selected && "value")}</label>
+        {(context.selected) && <div>
+            <label>value</label>
             <input value={context.element_value} onChange={({ target: { value } }) => {
                 context.setValue(value);
                 context.change_value(value);
@@ -42,7 +41,7 @@ export default () => {
                     if (z > 0.5) arr.push(tarr);
                     else arr.push(tarr[0] || 1)
                 }
-                new GArray(context.representation, {
+                new VArray(context.representation, {
                     value: arr,
                     measure:{x:50,y:30}
                 });

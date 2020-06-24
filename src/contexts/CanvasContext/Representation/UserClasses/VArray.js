@@ -4,16 +4,6 @@ class VArray extends GArray{
     get value() {
         return this.array;
     }
-    show() {
-        this.repr.attach_to_draw(this.get_cid, this);
-        this.repr.registerSelection(this.get_cid, this);
-        this.repr.registerDragging(this.get_cid(), this);
-    }
-    hide() {
-        this.repr.detach_from_draw(this.get_cid, this);
-        this.repr.unregisterSelection(this.get_cid, this);
-        this.repr.unregisterDragging(this.get_cid(), this);
-    }
     set value(val) {
         let deref = JSON.parse(JSON.stringify(val));
         let temp = JSON.parse(JSON.stringify(val));

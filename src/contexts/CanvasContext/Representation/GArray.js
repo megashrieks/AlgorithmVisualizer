@@ -38,8 +38,20 @@ class GArray{
         this.highlight_indices = new Set();
         if (show) this.show();
     }
+
     release() {
         this.hide();
+        delete this;
+    }
+    show() {
+        this.repr.attach_to_draw(this.get_cid, this);
+        this.repr.registerSelection(this.get_cid, this);
+        this.repr.registerDragging(this.get_cid(), this);
+    }
+    hide() {
+        this.repr.detach_from_draw(this.get_cid, this);
+        this.repr.unregisterSelection(this.get_cid, this);
+        this.repr.unregisterDragging(this.get_cid(), this);
     }
     mouse_inside({ x, y }) {
         x -= this.position.x;
