@@ -34,27 +34,17 @@ const run = async ({ input, repr, show }) => {
     }
     something = null;
 }
-
 const tictactoe = (board,turn) => {
-    //check intermediate positions
-    for (let i = 0; i < board.length; ++i){
-        for (let j = 0; j < board.length; ++j){
-            if (board[i][j] != "") continue;
-            board[i][j] = turn;
-            if (won(board) == turn) return board;
-            board[i][j] = '';
-        }
-    }
-    let maxwins = -Infinity, maxcoord = null;
+    let minloss = -Infinity, maxcoord = null;
     for (let i = 0; i < board.length; ++i) {
         for (let j = 0; j < board.length; ++j) {
             if (board[i][j] != "") continue;
             board[i][j] = turn;
-            let t = 'X';
-            if (turn == 'X') t = 'O';
-            let temp = maximize(board, t, turn);
-            if (temp >= maxwins) {
-                maxwins = temp; maxcoord = { x: i, y: j };
+            let t = turn == 'X' ? 'O' : 'X';
+            let temp = minimax(board, t,turn);
+            if (temp > minloss) {
+                minloss = temp;
+                maxcoord = { x: i, y: j };
             }
             board[i][j] = '';
         }
@@ -64,23 +54,32 @@ const tictactoe = (board,turn) => {
     return board;
 }
 
-const maximize = (board, turn, maxplayer) => {
-    let wins = 0;
+const minimax = (board, turn, maxp) => {
+    let wonb = won(board);
+    if (wonb == maxp) return 1;
+    else if (wonb != -1) return -1;
+    else {
+        let flag = false;
+        for (let i = 0; i < board.length; ++i) 
+            for (let j = 0; j < board.length; ++j) 
+                if (!board[i][j]) { flag = true; break; }
+        if (!flag) return 0;
+    }
+    let wins = -Infinity, f = Math.max;
+    if (turn != maxp) {
+        wins = Infinity;
+        f = Math.min;
+    }
     for (let i = 0; i < board.length; ++i){
         for (let j = 0; j < board.length; ++j){
             if (board[i][j] != '') continue;
             board[i][j] = turn;
-            if (won(board) == maxplayer) wins++;
-            else if (won(board) != -1) wins--;
-            else {
-                let t = 'X';
-                if (turn == 'X') t = 'O'
-                wins += maximize(board, t, maxplayer) / 3;
-            }
+            let t = turn === 'X' ? 'O' : 'X';
+            wins = f(wins, minimax(board, t, maxp));
             board[i][j] = '';
         }
     }
-    return wins;
+    return wins
 }
 
 const won = board => {
@@ -136,7 +135,6 @@ const won = board => {
 //         prev[i][col] = 1;
 //         v.highlight(i, col);
 //         highlight.push({row:i,col})
-//         // v.value = prev;
 //         if (valid(prev, i, col, size)) {
 //             if (col + 1 != size)
 //                 NQueen(prev, col + 1, size);
@@ -152,7 +150,6 @@ const won = board => {
 //         prev[i][col] = "";
 //         v.remove_highlight(i, col);
 //         highlight.pop();
-//         // v.value = prev;
 //     }
 //     return false;
 // }
