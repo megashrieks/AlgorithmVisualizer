@@ -13,7 +13,7 @@ class VArray extends GArray{
         })
     }
     highlight = (row,col) => {
-        if (this.dimensions == 1)
+        if (this.dimensions === 1)
             this.repr.add_to_queue(() => this.highlight_indices.add(JSON.stringify({ row: 0, col: row })));
         else
             this.repr.add_to_queue(() => this.highlight_indices.add(JSON.stringify({ row, col })));

@@ -86,7 +86,7 @@ class Dispatcher{
                 value = element.weight;
                 func = v => element.weight = v;
             } else if (element instanceof VArray) {
-                if (element.dimensions == 1) {
+                if (element.dimensions === 1) {
                     let col = element.select_position.col;
                     value = element.value[col];
                     func = v => {

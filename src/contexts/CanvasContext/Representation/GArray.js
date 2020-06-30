@@ -16,10 +16,12 @@ class GArray{
     highlight_array = false;
     select_position = { row:-1,col:-1 };
     highlight_indices = null;
+    name = null;
     get_cid = () => GArray.__class_identifier;
     get_id = () => this.get_cid() + GArray.__member_count++;
     constructor(representation, {
         value,
+        name="",
         show=true,
         dimensions = value[0] instanceof Array ? 2 : 1,
         measure = { x: 30, y: 30 },
@@ -29,6 +31,7 @@ class GArray{
         }
     }) {
         this.id = this.get_id();
+        this.name = name;
         this.repr = representation;
         this.array = JSON.parse(JSON.stringify(value));
         this.label = JSON.parse(JSON.stringify(value));
@@ -104,6 +107,47 @@ class GArray{
     unselect() {
         this.highlight_array = false;
     }
+    draw_boundary(position, width, height) {
+        this.repr.context.strokeStyle = "#aaa";
+        if (this.highlight_array) {
+            this.repr.context.strokeStyle = "blue"
+        }
+        if (this.name) {
+            let m = this.repr.measure_text(this.name);
+            if (position.x + this.measure.x / 2 + m.width > position.x + width) {
+                this.repr.center_text(this.name, {
+                    x: position.x + width/ 2,
+                    y: position.y
+                }).fill(this.highlight_array ? "blue" : "#333");
+                let gap = 10;
+                this.repr.context.beginPath();
+                this.repr.context.moveTo(position.x, position.y+m.height/2+5);
+                this.repr.context.lineTo(position.x, position.y + height);
+                this.repr.context.lineTo(position.x + width, position.y + height);
+                this.repr.context.lineTo(position.x + width, position.y+m.height/2+5);
+                this.repr.context.stroke();
+            } else {
+                this.repr.center_text(this.name, {
+                    x: position.x + this.measure.x / 2 + m.width / 2,
+                    y: position.y
+                }).fill(this.highlight_array ? "blue" : "#333");
+                let gap = 10;
+                this.repr.context.beginPath();
+                this.repr.context.moveTo(position.x + this.measure.x / 2 - gap, position.y);
+                this.repr.context.lineTo(position.x, position.y);
+                this.repr.context.lineTo(position.x, position.y + height);
+                this.repr.context.lineTo(position.x + width, position.y + height);
+                this.repr.context.lineTo(position.x + width, position.y);
+                this.repr.context.lineTo(position.x + this.measure.x / 2 + m.width + gap, position.y);
+                this.repr.context.stroke();
+            }
+
+        }
+        else
+            this.repr.context.strokeRect(position.x, position.y, width, height);
+
+        this.repr.context.strokeStyle = this.repr.strokeStyle;
+    }
     draw() {
         let hr = new Set();
         let hc = new Set();
@@ -169,6 +213,11 @@ class GArray{
                     y: pos.y + Math.min(this.measure.x, this.measure.y) / 2
                 }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
             }
+            this.draw_boundary(
+                { x: pos.x - this.measure.x*.75, y: pos.y - Math.min(this.measure.x, this.measure.y)/2 },
+                (max_len + 1.25) * this.measure.x,
+                (this.label.length+2)*this.measure.y
+            );
         } else {
             this.draw_single_d(this.label, this.position);
             let pos = { ...this.position };

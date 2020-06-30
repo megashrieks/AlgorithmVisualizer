@@ -1,4 +1,4 @@
-import { Node, VArray } from './UserClasses/'
+import { VArray } from './UserClasses/'
 let playground;
 let something = null;
 const run = async ({ input, repr, show }) => {
@@ -13,23 +13,23 @@ const run = async ({ input, repr, show }) => {
     let count = 0;
     while (count++ < 5) {
         let [element] = await input(VArray, 1);
-        if (element != playground) {
+        if (element !== playground) {
             console.log("select the tictactoe area")
             continue;
         }
         let { row, col } = element.select_position;
-        if (board[row][col] != "") {
+        if (board[row][col] !== "") {
             console.log("Cell not empty");
             continue;
         }
         board[row][col] = "X"
         playground.value = board;
         let w = won(board);
-        if (w != -1) { break; }
+        if (w !== -1) { break; }
         board = tictactoe(board,'O');
         playground.value = board;
         w = won(board);
-        if (w != -1) { break; }
+        if (w !== -1) { break; }
         repr.start_execution();
     }
     something = null;
@@ -38,9 +38,9 @@ const tictactoe = (board,turn) => {
     let minloss = -Infinity, maxcoord = null;
     for (let i = 0; i < board.length; ++i) {
         for (let j = 0; j < board.length; ++j) {
-            if (board[i][j] != "") continue;
+            if (board[i][j] !== "") continue;
             board[i][j] = turn;
-            let t = turn == 'X' ? 'O' : 'X';
+            let t = turn === 'X' ? 'O' : 'X';
             let temp = minimax(board, t,turn);
             if (temp > minloss) {
                 minloss = temp;
@@ -56,8 +56,8 @@ const tictactoe = (board,turn) => {
 
 const minimax = (board, turn, maxp) => {
     let wonb = won(board);
-    if (wonb == maxp) return 1;
-    else if (wonb != -1) return -1;
+    if (wonb === maxp) return 1;
+    else if (wonb !== -1) return -1;
     else {
         let flag = false;
         for (let i = 0; i < board.length; ++i) 
@@ -66,13 +66,13 @@ const minimax = (board, turn, maxp) => {
         if (!flag) return 0;
     }
     let wins = -Infinity, f = Math.max;
-    if (turn != maxp) {
+    if (turn !== maxp) {
         wins = Infinity;
         f = Math.min;
     }
     for (let i = 0; i < board.length; ++i){
         for (let j = 0; j < board.length; ++j){
-            if (board[i][j] != '') continue;
+            if (board[i][j] !== '') continue;
             board[i][j] = turn;
             let t = turn === 'X' ? 'O' : 'X';
             wins = f(wins, minimax(board, t, maxp));
@@ -92,9 +92,9 @@ const won = board => {
         let p1 = { x: ~~(positions[i][0] / 3), y: (positions[i][0] % 3) };
         let p2 = { x: ~~(positions[i][1] / 3), y: (positions[i][1] % 3) };
         let p3 = { x: ~~(positions[i][2] / 3), y: (positions[i][2] % 3) };
-        let temp = board[p1.x][p1.y] == board[p2.x][p2.y];
-        if (temp) temp = board[p1.x][p1.y] == board[p3.x][p3.y];
-        if(temp && board[p1.x][p1.y] != '') return board[p1.x][p1.y]
+        let temp = board[p1.x][p1.y] === board[p2.x][p2.y];
+        if (temp) temp = board[p1.x][p1.y] === board[p3.x][p3.y];
+        if(temp && board[p1.x][p1.y] !== '') return board[p1.x][p1.y]
     }
     return -1;
 }

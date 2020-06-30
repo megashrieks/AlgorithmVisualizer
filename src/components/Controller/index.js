@@ -43,7 +43,8 @@ export default () => {
                 }
                 new VArray(context.representation, {
                     value: arr,
-                    measure:{x:50,y:30}
+                    measure: { x: 50, y: 30 },
+                    name:"Array-"+~~(Math.random()*20)
                 });
                 context.representation.draw();
             }}>GArray</button>
