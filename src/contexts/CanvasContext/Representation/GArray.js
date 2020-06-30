@@ -228,6 +228,14 @@ class GArray{
                     y: pos.y + this.measure.y / 2
                 }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
             }
+            this.draw_boundary(
+                {
+                    x: this.position.x - this.measure.x * .4,
+                    y: this.position.y - this.measure.y
+                },
+                (this.label.length + .8) * this.measure.x,
+                (pos.y - this.position.y + Math.min(this.measure.x, this.measure.y)*2.3)
+            );
         }
         this.repr.context.strokeStyle = temp;
     }
