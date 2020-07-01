@@ -57,21 +57,35 @@ class GArray{
         this.repr.unregisterDragging(this.get_cid(), this);
     }
     mouse_inside({ x, y }) {
-        x -= this.position.x;
-        y -= this.position.y;
-        if (this.dimensions === 1) {
-            return x >= 0 && x <= this.label.length * this.measure.x &&
-                y >= 0 && y <= this.measure.y
+        let pos, max_len;
+        pos = { ...this.position };
+        if (this.dimensions == 2) {
+            pos.y -= Math.min(this.measure.x, this.measure.y);
+            max_len = 0
+            for (let i = 0; i < this.label.length; ++i)
+                max_len = Math.max(max_len, this.label[i].length);
+            x -= pos.x - this.measure.x;
+            y -= pos.y - Math.min(this.measure.x, this.measure.y) / 4;
+            return x >= 0 && y >= 0 && x <= (max_len + 2) * this.measure.x && y <= (this.label.length + 2) * this.measure.y;
+        } else {
+            pos.y += Math.min(this.measure.x, this.measure.y);
+            x -= this.position.x - this.measure.x * .4;
+            y -= this.position.y - this.measure.y;
+            return x >= 0 && y >= 0 && x <= (this.label.length + .8) * this.measure.x && y <= (pos.y - this.position.y + Math.min(this.measure.x, this.measure.y) * 2.3);
         }
-        if (y >= 0 && y <= this.label.length * this.measure.y) {
-            let row = ~~(y / this.measure.y);
-            return x >= 0 && x <= this.label[row].length * this.measure.x;
-        }
-        return false;
+        // x -= this.position.x;
+        // y -= this.position.y;
+        // if (this.dimensions === 1) {
+        //     return x >= 0 && x <= this.label.length * this.measure.x &&
+        //         y >= 0 && y <= this.measure.y
+        // }
+        // if (y >= 0 && y <= this.label.length * this.measure.y) {
+        //     let row = ~~(y / this.measure.y);
+        //     return x >= 0 && x <= this.label[row].length * this.measure.x;
+        // }
+        // return false;
     }
 
-    //TODO : improve the effieciency of the draw calls by
-    //making a bigger box at the beginning instead of many smaller boxes
     draw_box(array, { x, y }, {
         left=false,top=false
     }) {
@@ -100,9 +114,11 @@ class GArray{
         this.highlight_array = true;
         x -= this.position.x;
         y -= this.position.y;
+        if (x < 0 || y < 0) { this.select_position = null; return;}
         let row = ~~(y / this.measure.y);
-        let col = ~~(x / this.measure.x)
-        this.select_position = { row, col };
+        let col = ~~(x / this.measure.x);
+        if (row < 0 || col < 0 || (this.dimensions == 1 && (this.label.length <= col || row > 0)) ||this.label.length <= row || this.label[row].length <= col) this.select_position = null;
+        else this.select_position = { row, col };
     }
     unselect() {
         this.highlight_array = false;
@@ -118,8 +134,7 @@ class GArray{
                 this.repr.center_text(this.name, {
                     x: position.x + width/ 2,
                     y: position.y
-                }).fill(this.highlight_array ? "blue" : "#333");
-                let gap = 10;
+                }, (this.measure.y / 2 + 1) + "px").fill(this.highlight_array ? "blue" : "#333");
                 this.repr.context.beginPath();
                 this.repr.context.moveTo(position.x, position.y+m.height/2+5);
                 this.repr.context.lineTo(position.x, position.y + height);
@@ -130,7 +145,7 @@ class GArray{
                 this.repr.center_text(this.name, {
                     x: position.x + this.measure.x / 2 + m.width / 2,
                     y: position.y
-                }).fill(this.highlight_array ? "blue" : "#333");
+                }, (this.measure.y / 2 + 1) + "px").fill(this.highlight_array ? "blue" : "#333");
                 let gap = 10;
                 this.repr.context.beginPath();
                 this.repr.context.moveTo(position.x + this.measure.x / 2 - gap, position.y);
@@ -141,7 +156,6 @@ class GArray{
                 this.repr.context.lineTo(position.x + this.measure.x / 2 + m.width + gap, position.y);
                 this.repr.context.stroke();
             }
-
         }
         else
             this.repr.context.strokeRect(position.x, position.y, width, height);
@@ -152,8 +166,8 @@ class GArray{
         let hr = new Set();
         let hc = new Set();
         let temp = this.repr.context.strokeStyle;
-        if (!this.label.length) return;
-        if (this.highlight_array) {
+        // if (!this.label.length) return;
+        if (this.highlight_array && this.select_position) {
             this.repr.context.strokeStyle = GArray.geometry.highlight_color;
             let { row, col } = this.select_position;
             let t = this.repr.context.fillStyle;
@@ -191,7 +205,7 @@ class GArray{
                 this.repr.center_text(i, {
                     x: pos.x + Math.min(this.measure.x, this.measure.y) / 2,
                     y: pos.y + this.measure.y*i + this.measure.y / 2
-                }, "10px").fill(hr.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+                }, (this.measure.y / 2-2) + "px").fill(hr.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
             }
             let max_len = this.label[0].length;
             this.draw_single_d(this.label[0], {
@@ -211,11 +225,11 @@ class GArray{
                 this.repr.center_text(i, {
                     x: this.measure.x * i + pos.x + this.measure.x / 2,
                     y: pos.y + Math.min(this.measure.x, this.measure.y) / 2
-                }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+                }, (this.measure.y / 2 - 2) + "px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
             }
             this.draw_boundary(
-                { x: pos.x - this.measure.x*.75, y: pos.y - Math.min(this.measure.x, this.measure.y)/2 },
-                (max_len + 1.25) * this.measure.x,
+                { x: pos.x - this.measure.x, y: pos.y - Math.min(this.measure.x, this.measure.y)/4 },
+                (max_len + 2) * this.measure.x,
                 (this.label.length+2)*this.measure.y
             );
         } else {
@@ -226,7 +240,7 @@ class GArray{
                 this.repr.center_text(i, {
                     x: this.measure.x*i + pos.x + this.measure.x / 2,
                     y: pos.y + this.measure.y / 2
-                }, "10px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
+                }, (this.measure.y / 2 - 2) + "px").fill(hc.has(i) ? GArray.geometry.index_highlight_color : GArray.geometry.index_color);
             }
             this.draw_boundary(
                 {

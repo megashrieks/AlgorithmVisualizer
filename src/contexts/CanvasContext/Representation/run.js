@@ -17,6 +17,7 @@ const run = async ({ input, repr, show }) => {
             console.log("select the tictactoe area")
             continue;
         }
+        if (!element.select_position) continue;
         let { row, col } = element.select_position;
         if (board[row][col] !== "") {
             console.log("Cell not empty");
